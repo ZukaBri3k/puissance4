@@ -39,6 +39,32 @@ void initGrille(Grille grille) {
 
 }
 
+//procédure d'affichage de la grille
+void afficherGrille(Grille t, char pion, int colonne){
+    //permet de centrer le pion au dessus de la grille en fonction de la colonne
+    for (int i = 1; i < colonne; ++i) {
+        printf("    ");
+    }
+    printf("  %c\n\n",pion);
+    //permet d'afficher une ligne en fonction du nombre de colonne de la grille et de la grille
+    for (int i=0;i<NB_LIGNE;i++) {
+        printf("=");
+        for (int j = 0; j < NB_COLONNE; j++){
+            printf("====");
+        }
+        printf("\n");
+        for (int j = 0; j < NB_COLONNE; j++){
+            printf("= %c ", t[i][j]);
+        }
+        printf("=\n");
+    }
+    printf("=");
+    for (int j = 0; j < NB_COLONNE; j++){
+        printf("====");
+    }
+    printf("\n");
+}
+
 
 
 int main() {
