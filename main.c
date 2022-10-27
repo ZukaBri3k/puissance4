@@ -88,6 +88,29 @@ bool grillePleine(Grille grille) {
     }
 }
 
+//permet de trouver la première ligne vide d'une colonne
+int trouverLigne(Grille grille, int colonne){
+    int ligneVide = -1, i = 0;
+    bool estRemplie = false;
+    //on parcours la colonne tant que l'on n'a pas trouvé de caractère différent de VIDE
+    while(i < NB_LIGNE && estRemplie == false) {
+        //si l'on en trouve un on définit la dernière ligne vide de la colonne comme étant la précédente
+        if(grille[i][colonne-1] != ' '){
+            ligneVide = i-1;
+            estRemplie = true;
+        }
+        i++;
+    }
+    //si la ligne vide est toujours à -1 et que l'on n'a pas trouvé de caractères autre que VIDE on retourne la
+    //première ligne de la grille
+    if(ligneVide == -1 && estRemplie == false){
+        return NB_LIGNE-1;
+    }else {
+        //sinon on retourne la ligne trouvée
+        return ligneVide;
+    }
+}
+
 
 
 int main() {
