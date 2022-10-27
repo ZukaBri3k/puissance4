@@ -142,7 +142,16 @@ int choisirColonne(Grille grille, char pion, int colonne){
     return colonne;
 }
 
-
+//permet faire jouer le tour du joueur
+void jouer(Grille grille, char pion, int *colonne, int *ligne){
+    //on laisse le joueur choisir sa colonne
+    *colonne = choisirColonne(grille, pion, COLONNE_DEP);
+    *ligne = trouverLigne(grille, *colonne);
+    //quand la colonne choisie est valide on ajoute le pion du joueur dans la grille
+    grille[*ligne][*colonne-1] = pion;
+    //on réaffiche la grille avec la modification du joueur
+    afficherGrille(grille, 'O', 4);
+}
 
 int main() {
 
