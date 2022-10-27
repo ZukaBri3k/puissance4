@@ -111,6 +111,37 @@ int trouverLigne(Grille grille, int colonne){
     }
 }
 
+//permet de laisser l'utilisateur de choisir sa colonne
+int choisirColonne(Grille grille, char pion, int colonne){
+    char choix;
+    bool continuer = true;
+    int numLigne;
+    do {
+        //laisse l'utilisateur choisir sa colonne
+        afficherGrille(grille, pion, colonne);
+        printf("Utilisez 'q' et 'd' pour deplacer votre pion\n");
+        scanf("%c", &choix);
+
+        //on vérifie que l'utilisateur ne dépasse pas les limites de la grille
+        if(choix == 'q' && colonne > 1){
+            colonne -= 1;
+        }else if(choix == 'd' && colonne < NB_COLONNE){
+            colonne += 1;
+        }
+        //on cherche la ligne disponible dans la colonne
+        numLigne = trouverLigne(grille, colonne);
+        //si la colonne est pleine on laisse tourner la boucle
+        if(choix == ' ' && numLigne != -1){
+            continuer = false;
+        } else {
+            //sinon on stop la boucle
+            continuer = true;
+        }
+
+    } while (continuer == true);
+    return colonne;
+}
+
 
 
 int main() {
