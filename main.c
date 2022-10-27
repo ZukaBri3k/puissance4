@@ -65,6 +65,29 @@ void afficherGrille(Grille t, char pion, int colonne){
     printf("\n");
 }
 
+//permet de tester si la grille est pleine
+bool grillePleine(Grille grille) {
+    bool pleine = true;
+    int i = 0, j = 0;
+    //on parcours la grille tant que l'on n'a pas trouvé de VIDE
+    while (i < NB_LIGNE && pleine == true) {
+        while (j < NB_COLONNE && pleine == true) {
+            //Si l'on trouve un VIDE on stop la boucle
+            if (grille[i][j] == ' '){
+                pleine = false;
+            }
+            j++;
+        }
+        i++;
+    }
+    //renvoie true si la grille est pleine sinon renvoie false
+    if (pleine == true){
+        return true;
+    } else {
+        return false;
+    }
+}
+
 
 
 int main() {
