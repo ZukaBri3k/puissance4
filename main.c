@@ -5,9 +5,10 @@
 #define NB_LIGNE 6
 #define NB_COLONNE 7
 const char VIDE = ' ';
+const char INCONNU = ' ';
 const char PION_A = 'X';
 const char PION_B = 'O';
-const int COLONNE_DEP = NB_COLONNE / 2;
+const int COLONNE_DEP = (NB_COLONNE / 2) + 1;
 
 //déclaration du type de grille ainsi que des fonctions et procédures
 typedef char Grille[NB_LIGNE][NB_COLONNE];
@@ -17,6 +18,8 @@ bool grillePleine(Grille grille);
 int trouverLigne(Grille grille, int colonne);
 int choisirColonne(Grille grille, char pion, int colonne);
 void jouer(Grille grille, char pion, int *colonne, int *ligne);
+bool estVainqueur(Grille g, int ligne, int colonne);
+void finDePartie(char pionGagnant);
 
 //procédure d'initialisation de la grille
 void initGrille(Grille grille) {
@@ -29,14 +32,6 @@ void initGrille(Grille grille) {
             grille[i][j] = VIDE;
         }
     }
-    grille[5][0] = 'O';
-    grille[4][0] = 'O';
-    grille[3][0] = 'O';
-    grille[2][0] = 'O';
-    grille[1][0] = 'O';
-    grille[0][0] = 'O';
-    grille[5][1] = 'O';
-
 }
 
 //procédure d'affichage de la grille
@@ -63,6 +58,7 @@ void afficherGrille(Grille t, char pion, int colonne){
         printf("====");
     }
     printf("\n");
+    printf("Utilisez 'q' et 'd' pour deplacer votre pion\n");
 }
 
 //permet de tester si la grille est pleine
@@ -118,15 +114,17 @@ int choisirColonne(Grille grille, char pion, int colonne){
     int numLigne;
     do {
         //laisse l'utilisateur choisir sa colonne
-        afficherGrille(grille, pion, colonne);
-        printf("Utilisez 'q' et 'd' pour deplacer votre pion\n");
+
+
         scanf("%c", &choix);
 
         //on vérifie que l'utilisateur ne dépasse pas les limites de la grille
         if(choix == 'q' && colonne > 1){
             colonne -= 1;
+            afficherGrille(grille, pion, colonne);
         }else if(choix == 'd' && colonne < NB_COLONNE){
             colonne += 1;
+            afficherGrille(grille, pion, colonne);
         }
         //on cherche la ligne disponible dans la colonne
         numLigne = trouverLigne(grille, colonne);
@@ -149,18 +147,151 @@ void jouer(Grille grille, char pion, int *colonne, int *ligne){
     *ligne = trouverLigne(grille, *colonne);
     //quand la colonne choisie est valide on ajoute le pion du joueur dans la grille
     grille[*ligne][*colonne-1] = pion;
-    //on réaffiche la grille avec la modification du joueur
-    afficherGrille(grille, 'O', 4);
+}
+
+bool estVainqueur(Grille grille, int ligne, int colonne) {
+    int pionConsecu = 1, i = ligne, j = colonne - 1;
+    char caracRef = grille[ligne][colonne - 1];
+    char pionCourrant = caracRef;
+
+    //test d'un puissance 4 en ligne
+    while(pionCourrant == caracRef && pionConsecu < 4 && j < NB_COLONNE - 1) {
+        j++;
+        pionCourrant = grille[i][j];
+        if(pionCourrant == caracRef) {
+            pionConsecu++;
+        }
+    }
+    pionCourrant = caracRef;
+    j = colonne - 1;
+    while(pionCourrant == caracRef && pionConsecu < 4 && j >= 0) {
+        j--;
+        pionCourrant = grille[i][j];
+        if(pionCourrant == caracRef) {
+            pionConsecu++;
+        }
+    }
+    //si aucun puissance 4 horizontal detecte on recherche verticalement
+    if(pionConsecu != 4) {
+        pionConsecu = 1;
+        pionCourrant = caracRef;
+        i = ligne;
+        j = colonne - 1;
+
+        while(pionCourrant == caracRef && pionConsecu < 4 && i < NB_LIGNE - 1) {
+            i++;
+            pionCourrant = grille[i][j];
+            if(pionCourrant == caracRef) {
+                pionConsecu++;
+            }
+        }
+        pionCourrant = caracRef;
+        i = ligne;
+        while(pionCourrant == caracRef && pionConsecu < 4 && i >= 0) {
+            i--;
+            pionCourrant = grille[i][j];
+            if(pionCourrant == caracRef) {
+                pionConsecu++;
+            }
+        }
+    }
+    //on recherche un puissance 4 dans la diagonale vers la droite
+    if(pionConsecu != 4) {
+        pionConsecu = 1;
+        pionCourrant = caracRef;
+        j = colonne - 1;
+        i = ligne;
+
+        while(pionCourrant == caracRef && pionConsecu < 4 && i < NB_LIGNE - 1 && j < NB_COLONNE - 1){
+            i++;
+            j++;
+            pionCourrant = grille[i][j];
+            if(pionCourrant == caracRef) {
+                pionConsecu++;
+            }
+        }
+        pionCourrant = caracRef;
+        j = colonne - 1;
+        i = ligne;
+
+        while(pionCourrant == caracRef && pionConsecu < 4 && i > 0 && j > 0){
+            i--;
+            j--;
+            pionCourrant = grille[i][j];
+            if(pionCourrant == caracRef) {
+                pionConsecu++;
+            }
+        }
+    }
+    //on recherche un puissance 4 sur la diagonale droite
+    if(pionConsecu != 4) {
+        i = ligne;
+        j = colonne - 1;
+        pionConsecu = 1;
+        pionCourrant = caracRef;
+
+        while(pionCourrant == caracRef && pionConsecu < 4 && i < NB_LIGNE - 1 && j > 0) {
+            i++;
+            j--;
+            pionCourrant = grille[i][j];
+            if(pionCourrant == caracRef){
+                pionConsecu++;
+            }
+        }
+
+        i = ligne;
+        j = colonne - 1;
+        pionCourrant = caracRef;
+
+        while(pionCourrant == caracRef && pionConsecu < 4 && i > 0 && j < NB_COLONNE - 1) {
+            i--;
+            j++;
+            pionCourrant = grille[i][j];
+            if(pionCourrant == caracRef){
+                pionConsecu++;
+            }
+        }
+    }
+
+    if(pionConsecu == 4) {
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+void finDePartie(char pionGagnant) {
+    if(pionGagnant == INCONNU) {
+        printf("Match nul !\n");
+    } else {
+        printf("Le joueur gagnant est le pion %c\n", pionGagnant);
+    }
 }
 
 int main() {
-
+    char vainqueur;
     int colonne, ligne;
+    Grille g;
 
-    Grille grille;
-    initGrille(grille);
-    jouer(grille, 'X', &colonne, &ligne);
-    printf("%i %i", colonne, ligne);
+    initGrille(g);
+    vainqueur = INCONNU;
+    afficherGrille(g, 'X', COLONNE_DEP);
+
+    while(vainqueur == INCONNU && grillePleine(g) == false) {
+        jouer(g, PION_A, &colonne, &ligne);
+        afficherGrille(g, PION_B, COLONNE_DEP);
+        if(estVainqueur(g, ligne, colonne) == true) {
+            vainqueur = PION_A;
+        } else if(grillePleine(g) == false) {
+            jouer(g, PION_B, &colonne, &ligne);
+            afficherGrille(g, PION_A, COLONNE_DEP);
+            if(estVainqueur(g, ligne, colonne) == true) {
+                vainqueur = PION_B;
+            }
+        }
+    }
+    finDePartie(vainqueur);
 
     return 0;
 }
