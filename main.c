@@ -1,22 +1,205 @@
+/**
+*
+* \brief Programme Puissance4 de la SAE R1.01
+*
+* \author DUMERCHAT Kyrill
+*
+* \version 1.0
+*
+* \date 14 Novembre 2022
+*
+* Ce programme propose un jeu de puissance 4 se jouant
+* au clavier. Le but du jeu est de réussir à aligner 4 pions
+* à l'horizontal, vertical ou en diagonale.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-//on définit les dimensions de la grille si l'on veut la modifier ainsi que les constantes
+
+/**
+*
+* \def NB_LIGNE
+*
+* \brief constante #define qui permet de renseigner le nombre de ligne de la grille
+* de jeu.
+*
+*/
 #define NB_LIGNE 6
+
+/**
+*
+* \def NB_COLONNE
+*
+* \brief constante #define qui permet de renseigner le nombre de colonne de la grille
+* de jeu.
+*
+*/
 #define NB_COLONNE 7
+
+/**
+*
+* \def VIDE
+*
+* \brief constante qui symbolise une case vide dans la grille.
+*
+*/
 const char VIDE = ' ';
+
+/**
+*
+* \def INCONNU
+*
+* \brief constante qui symbolise qu'aucun joueur n'a gagné la partie : gagnant inconnu.
+*
+*/
 const char INCONNU = ' ';
+
+/**
+*
+* \def PION_A
+*
+* \brief constante pour le symbole du pion du joueur A.
+*
+*/
 const char PION_A = 'X';
+
+/**
+*
+* \def PION_B
+*
+* \brief constante pour le symbole du pion du joueur B.
+*
+*/
 const char PION_B = 'O';
+
+/**
+*
+* \def COLONNE_DEP
+*
+* \brief constante pour la colonne de départ d'ou va apparaitre le pion
+* au dessus de la grille avant que le joueur puisse le bouger.
+*
+*/
 const int COLONNE_DEP = (NB_COLONNE / 2) + 1;
 
-//déclaration du type de grille ainsi que des fonctions et procédures
+/**
+*
+* \typedef Grille
+*
+* \brief type tableau à 2 dimensioins de NB_COLONNE colonnes et NB_LIGNE lignes de caractères
+*
+* Le type Grille sert à matérialiser la grille du puissance 4 afin de l'afficher
+* et détecter un puissance 4.
+*
+*/
 typedef char Grille[NB_LIGNE][NB_COLONNE];
+
+/**
+*
+* \fn void initGrille(Grille grille)
+*
+* \brief Procédure qui initialise la grille avec l'élément VIDE.
+*
+* \param grille : EntF/SortF grille qui va être initialisée.
+*
+* Consiste à initialiser la grille à vide afin de l'afficher complètement vide
+* pour le début d'une partie.
+*
+*/
 void initGrille(Grille grille);
+
+/**
+*
+* \fn void afficherGrille(Grille t, char pion, int colonne)
+*
+* \brief Procédure qui affiche la grille et le pion du prochain joueur à jouer au dessus.
+*
+* \param t : EntF grille qui va être affichée.
+*
+* \param pion : EntF pion du prochain joueur qui va jouer.
+*
+* \param colonne : EntF colonne au dessus de laquelle le pion du prochain joueur à jouer
+* va être affiché.
+*
+* Consiste à afficher la grille avec le pion du joueur suivant (pion) au dessus de la colonne de départ (colonne) 
+* ainsi que les commandes de jeu.
+*
+*/
 void afficherGrille(Grille t, char  pion, int colonne);
+
+/**
+*
+* \fn bool grillePleine(Grille grille)
+*
+* \brief Fonction qui détecte si la grille est pleine.
+*
+* \param grille : EntF grille qui va être testée.
+*
+* \return true si la chaine est pleine. Sinon false.
+*
+* Consiste à tester si la grille de jeu est pleine. Renvoie true si la grille est pleine
+* sinon renvoie false.
+*
+*/
 bool grillePleine(Grille grille);
+
+/**
+*
+* \fn int trouverLigne(Grille grille, int colonne)
+*
+* \brief Fonction qui cherche quelle est la dernière ligne vide de la colonne.
+*
+* \param grille : EntF grille qui va être testée.
+*
+* \param colonne : EntF colonne sur laquelle l'on va trouver la dernière ligne de vide.
+*
+* \return entier qui correspond au numéro de la ligne. -1 si la colonne est pleine.
+*
+* Consiste à tester quelle est la dernière ligne de libre dans la colonne (colonne) de la grille donnée (grille) et renvoie
+* le numéro de la ligne trouvée, si la colonne est pleine renvoie -1.
+*
+*/
 int trouverLigne(Grille grille, int colonne);
+
+/**
+*
+* \fn int choisirColonne(Grille grille, char pion, int colonne)
+*
+* \brief Fonction qui permet au joueur de choisir sa colonne et placer son pion.
+*
+* \param grille : EntF grille dans laquelle le pion va être placé.
+*
+* \param pion : EntF pion qui va être placé dans la grille et affiché au dessus de celle-ci.
+*
+* \param colonne : EntF colonne de départ d'ou le pion va commencer à être placé au dessus de la grille.
+*
+* \return Le numéro de la colonne ou le joueur a joué.
+*
+* Consiste à faire jouer le joueur en le laissant se déplacer via les touches 'q' et 'd'
+* et choisir sa colonne via la touche 'espace'.
+*
+*/
 int choisirColonne(Grille grille, char pion, int colonne);
+
+/**
+*
+* \fn void jouer(Grille grille, char pion, int *colonne, int *ligne)
+*
+* \brief Procédure qui fait jouer le joueur et place son pion.
+*
+* \param grille : EntF/SortF grille qui va être modifiée.
+*
+* \param pion : EntF pion du joueur qui va être placé dans la grille.
+*
+* \param colonne : SortF colonne ou le joueur va placer son pion.
+*
+* \param ligne : SortF ligne ou le joueur va placer son pion
+*
+* Consiste à fair jouer le joueur et placer son pion dans la dernière case libre
+* de la colonne choisie.
+*
+*/
 void jouer(Grille grille, char pion, int *colonne, int *ligne);
 bool estVainqueur(Grille g, int ligne, int colonne);
 void finDePartie(char pionGagnant);
